@@ -3,6 +3,6 @@
 // All of the Node.js APIs are available in this process.
 const search = require('./src/form_sender');
 
-search.searchGoogle().then(() => {
+search.executeSteps().then(() => {
   document.getElementById("imageid").src="./example.png";
 });

@@ -1,57 +1,63 @@
 const puppeteer = require('puppeteer');
 
-const steps = [];
-
-const input = {
+const input1 = {
   selector: 'input[name=q]',
   action: 'type',
-  value: 'Funciona!!!!!'
+  value: 'cualquiera'
+}
+const input2 = {
+  selector: 'input[name=q]',
+  action: 'type',
+  value: 'este es el segundo'
+}
+const input3 = {
+  selector: 'input[name=q]',
+  action: 'type',
+  value: 'aca viene el tercero'
 }
 
 const finisher = {
-  selector: 'input[type="submit"]',
+  selector: 'input[type="submit"][name="btnK"]',
   action: 'click'
 }
 
 const step1 = {
   site: 'https://google.com',
-  inputs: [input],
+  inputs: [input1],
+  finisher: finisher
+}
+const step2 = {
+  site: 'https://google.com',
+  inputs: [input2],
+  finisher: finisher
+}
+const step3 = {
+  site: 'https://google.com',
+  inputs: [input3],
   finisher: finisher
 }
 
-const executeSite = step => {
-  await page.goto(step.site, {waitUntil: 'networkidle2'});
-  for (let i = 0; i < site.inputs.length; i ++) {
-    await page.waitFor(site.inputs[i]);
-  }
-  await page.waitFor('input[name=q]');
-}
+const steps = [step1, step2, step3];
 
-exports.executeSteps = () => {
-  const browser = await puppeteer.launch();
-}
-
-
-
-exports.searchGoogle = async () => {
-  const browser = await puppeteer.launch();
+const executeSite = async (browser, step, index) => {
   const page = await browser.newPage();
-  await page.goto('https://google.com', {waitUntil: 'networkidle2'});
+  await page.goto(step.site, {waitUntil: 'networkidle2'});
+  for (let i = 0; i < step.inputs.length; i ++) {
+    const input = step.inputs[i];
+    await page.waitFor(input.selector);
+    await page[input.action](input.selector, input.value);
+  }
+  await page.waitFor(step.finisher.selector);
+  await page[step.finisher.action](step.finisher.selector);
 
-  await page.waitFor('input[name=q]');
-  // Type our query into the search bar
-  await page.type('input[name=q]', 'puppeteer');
-  await page.click('input[type="submit"]');
-
-  // Wait for the results to show up
   await page.waitForSelector('h3 a');
+  await page.screenshot({ path: `example${index}.png` })
+}
 
-  // Extract the results from the page
-  // const links = await page.evaluate(() => {
-  //   const anchors = Array.from(document.querySelectorAll('h3 a'));
-  //   return anchors.map(anchor => anchor.textContent);
-  // });
-  // console.log(links.join('\n'));
-  await page.screenshot({path: 'example.png'});
+exports.executeSteps = async () => {
+  const browser = await puppeteer.launch();
+  for (let i = 0; i < steps.length; i++) {
+    await executeSite(browser, steps[i], i);
+  }
   await browser.close();
 }
