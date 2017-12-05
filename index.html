@@ -2,20 +2,54 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <!-- Insert this line above script imports  -->
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
+    <!-- normal script imports etc  -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="./index.css">
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" ></script>
+
+    <!-- Insert this line after script imports -->
+    <script>if (window.module) module = window.module;</script>
   </head>
   <body>
-    <h1>Hello World!</h1>
     <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js <script>document.write(process.versions.node)</script>,
+    <!-- We are using Node.js <script>document.write(process.versions.node)</script>,
     Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
-
+    and Electron <script>document.write(process.versions.electron)</script>. -->
+    <div id="holder">
+      Drag your file here
+    </div>
     <script>
       // You can also require other files to run in this process
       require('babel-register');
       require('./renderer.js')
     </script>
-    <img id="imageid" src="./example.png"></img>
+    <div class="container">
+      <table id="example" class="display nowrap" width="100%">
+        <thead>
+          <tr>
+          </tr>
+        </thead>
+
+        <tfoot>
+          <tr>
+          </tr>
+        </tfoot>
+
+        <tbody>
+          <tr>
+            <!-- <td>Tiger Nixon</td>
+            <td>System Architect</td>
+            <td>Edinburgh</td>
+            <td>61</td>
+            <td><progress value="10" max="100"></progress></td>
+            <td>$3,120</td> -->
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </body>
 </html>
