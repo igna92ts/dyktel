@@ -1,8 +1,11 @@
 const puppeteer = require('puppeteer'),
-  stepsConfig = require('../steps.config');
+  stepsConfig = require('../steps.config'),
+  csv = require('./csv_reader');
 
 const batchSize = 10;
-let progress = 0;
+exports.progress = 0;
+let progressAdder = 0;
+let errorRows = [];
 
 const executeSite = async (page, step) => {
   if (step.site) {
@@ -32,10 +35,16 @@ const executeBatch = async (browser, data) => {
   let promises = dataHead.map(async csvRow => {
     const steps = stepsConfig(csvRow).steps;
     const page = await browser.newPage();
-    for (let i = 0; i < steps.length; i++) {
-      await executeSite(page, steps[i]);
+    try {
+      for (let i = 0; i < steps.length; i++) {
+        await executeSite(page, steps[i]);
+      }
+      exports.progress += progressAdder;
+    } catch (error) {
+      errorRows.push(csvRow);
+    } finally {
+      await page.close();
     }
-    await page.close();
   });
   if (dataRest.length > 0) {
     const recur = await executeBatch(browser, dataRest)
@@ -46,9 +55,15 @@ const executeBatch = async (browser, data) => {
 
 exports.executeSteps = async data => {
   const browser = await puppeteer.launch({headless: true});
-  progress = 0;
+  exports.progress = 0;
+  progressAdder = 100 / data.length;
   const result = await executeBatch(browser, data);
   await Promise.all(result);
+  if (errorRows.length > 0) {
+    csv.writeCsv(errorRows);
+    errorRows = [];
+    console.log('There were errors');
+  }
   console.log('DONE');
   await browser.close();
 }
