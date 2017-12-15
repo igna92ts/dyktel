@@ -1,8 +1,8 @@
 // This file is required by the index.html file and will
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
-const sender = require('./src/form_sender'),
-  csvReader = require('./src/csv_reader');
+const sender = require('./form_sender'),
+  csvReader = require('./csv_reader');
 
 // search.executeSteps().then(() => {
 //   document.getElementById("imageid").src="./example.png";

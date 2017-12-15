@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer'),
-  stepsConfig = require('../steps.config'),
+  stepsConfig = require('./steps.config'),
   csv = require('./csv_reader');
 
 const batchSize = 10;
@@ -54,7 +54,7 @@ const executeBatch = async (browser, data) => {
 }
 
 exports.executeSteps = async data => {
-  const browser = await puppeteer.launch({headless: true});
+  const browser = await puppeteer.launch({headless: false});
   exports.progress = 0;
   progressAdder = 100 / data.length;
   const result = await executeBatch(browser, data);
